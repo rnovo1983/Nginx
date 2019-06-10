@@ -1,6 +1,6 @@
 name 'nginx'
-maintainer 'The Authors'
-maintainer_email 'you@example.com'
+maintainer 'Roberto Novo'
+maintainer_email 'rnovo1983g@gmail.com'
 license 'All Rights Reserved'
 description 'Installs/Configures nginx'
 long_description 'Installs/Configures nginx'
