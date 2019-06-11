@@ -1,0 +1,13 @@
+server {
+        listen <%= @listening_port %>;
+        listen [::]:<%= @listening_port %>;
+
+        root <%= @root_location %>;
+        index <% @indexes.each do |index| -%> <%= index %> <% end -%>;
+
+        server_name <% @server_name.each do |server| -%> <%= server %> <% end -%>;
+
+        location / {
+                try_files $uri $uri/ =404;
+        }
+}
