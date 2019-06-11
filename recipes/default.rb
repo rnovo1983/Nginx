@@ -24,6 +24,8 @@ end
 bash 'git_clone' do
   cwd "#{node['nginx']['site']['location']}"
   code <<-EOH
+  sudo [ -d #{node['nginx']['site']['git']['repo_name']} ] && sudo rm -rf #{node['nginx']['site']['git']['repo_name']}/
+  sudo [ -h "index.html" ] && sudo rm -rf index.html
   sudo git clone #{node['nginx']['site']['git']['repository']}
   sudo ln -s #{node['nginx']['site']['git']['repo_name']}/index.html index.html
   EOH
@@ -40,6 +42,19 @@ template "/etc/nginx/sites-available/#{node['nginx']['site']['name']}" do
     root_location:  node['nginx']['site']['location'],
     indexes:        node['nginx']['site']['indexes'],
     server_name:    node['nginx']['site']['server_name']
+  )
+end
+
+#server block directives
+template "/etc/nginx/nginx.conf" do
+  source 'nginx.conf.erb'
+  owner 'root'
+  group 'root'
+  mode '0644'
+  variables(
+    worker_processes:    node['nginx']['worker']['processes'],
+    worker_connections:  node['nginx']['worker']['connections'],
+    multi_accept:        node['nginx']['worker']['multi_accept']
   )
 end
 

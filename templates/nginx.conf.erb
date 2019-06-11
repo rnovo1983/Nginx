@@ -1,0 +1,103 @@
+# User and group used by worker processes
+user www-data;
+
+# Ideally # of worker processes = # of CPUs or cores
+# Set to auto to autodetect
+# max_clients = worker_processes * worker_connections
+worker_processes <%= @worker_processes %>;
+
+pid /run/nginx.pid;
+
+include /etc/nginx/modules-enabled/*.conf;
+
+events {
+
+        # Max number of simultaneous connections per worker process
+        worker_connections <%= @worker_connections %>;
+        # Accept all new connections at one time
+        multi_accept <%= @multi_accept %>;
+}
+
+http {
+
+        ##
+        # Basic Settings
+        ##
+
+        # Speed up file transfers by using sendfile() to copy directly
+        # between descriptors rather than using read()/write()
+        sendfile on;
+
+        # Tell Nginx not to send out partial frames; this increases throughput
+        # since TCP frames are filled up before being sent out (adds TCP_CORK)
+        # Send the response header and the beginning of a file in one packet
+        # Send a file in full packets
+        tcp_nopush on;
+
+        # Tell Nginx to enable the Nagle buffering algorithm for TCP packets
+        # which collates several smaller packets together into one larger packet
+        # thus saving bandwidth at the cost of a nearly imperceptible increase to latency
+        tcp_nodelay on;
+
+        # How long to allow each connection to stay idle;
+        # Longer values are better for each individual client, especially SSL
+        # But means that worker connections are tied up longer.75
+        keepalive_timeout 65;
+
+
+        types_hash_max_size 2048;
+
+        # Hide nginx version information
+        server_tokens off;
+
+        server_names_hash_bucket_size 64;
+        # server_name_in_redirect off;
+
+        include /etc/nginx/mime.types;
+        default_type application/octet-stream;
+
+        ##
+        # SSL Settings
+        ##
+
+        ssl_protocols TLSv1 TLSv1.1 TLSv1.2; # Dropping SSLv3, ref: POODLE
+        ssl_prefer_server_ciphers on;
+
+        ##
+        # Logging Settings
+        ##
+
+        access_log /var/log/nginx/access.log;
+        error_log /var/log/nginx/error.log;
+
+        ##
+        # Gzip Settings
+        ##
+
+        # Enable Gzip compression
+        gzip on;
+
+        # Do NOT compress anything smaller than 256 bytes
+        gzip_min_length 256;
+
+        # Compress data even for clients that are connecting via proxies
+        # Identified by the "Via" header
+        gzip_proxied any;
+
+        # Compression level (1-9)
+        # 5 is the perfect compromise between size and CPU usage
+        gzip_comp_level 5;
+
+
+        # gzip_vary on;
+        # gzip_buffers 16 8k;
+        # gzip_http_version 1.1;
+        gzip_types text/plain text/css application/json application/javascript text/xml application/xml application/xml+rss text/javascript;
+
+        ##
+        # Virtual Host Configs
+        ##
+
+        include /etc/nginx/conf.d/*.conf;
+        include /etc/nginx/sites-enabled/*;
+    }

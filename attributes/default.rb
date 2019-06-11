@@ -2,8 +2,11 @@
 default['nginx']['version']                       = '1.12.1'
 default['nginx']['packages_name']                 = ['nginx','git', 'vim', 'telnet', 'net-tools']
 default['nginx']['port']                          = '80'
-default['nginx']['ulimit']                        = '1024'
-default['nginx']['user']                          = 'nginx'
+
+#nginx worker configuration
+default['nginx']['worker']['processes']           = 'auto'
+default['nginx']['worker']['connections']         = '2048'
+default['nginx']['worker']['multi_accept']        = 'on'
 
 #github repository information
 default['nginx']['site']['git']['repo_name']      = 'test_site'
