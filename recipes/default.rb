@@ -3,7 +3,8 @@
 # Recipe:: default
 # Auhor:: Roberto Novo
 # Copyright:: 2019, The Authors, All Rights Reserved.
-apt_update 'update'
+
+include_recipe "dbase::default"
 
 node['nginx']['packages_name'].each do |p|
      package p do
