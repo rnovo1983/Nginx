@@ -18,9 +18,17 @@ platforms:
     driver_config:
       forward:
         - 80:80
+        - 2812:2812
 
 suites:
-  - name: default
+  - name: node1
+    driver:
+      vm_hostname: webserver1
+      network:
+      - ["private_network", {ip: "192.168.1.70"}]
+      customize:
+        memory: 1024
+        cpus: 1
     run_list:
       - recipe[nginx::default]
     verifier:
